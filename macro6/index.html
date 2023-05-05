@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Memory Matching Madness</title>
+        <style>
+            body {
+                background-color: black;
+                color: white;
+                text-align: center;
+            }
+            .hidden {
+                display: none;
+            }
+            #tile_container {
+                width: 400px;
+                margin: auto;
+            }
+            #tile_container img {
+                width: 100px;
+            }
+
+            #easy {
+                color: green;
+            }
+
+            #medium {
+                color: yellow;
+            }
+
+            #hard {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Memory Matching Madness</h1>
+
+        <div id="panel_gamestart">
+            <p>Let's play! click to begin!</p>
+            <button id="button_playgame">Play Game</button>
+            <select id="difficulty">
+                <option value="a" selected>easy</option>
+                <option value="b">medium</option>
+                <option value="c">hard</option>
+            </select>
+        </div>
+        <div id="panel_gameplaying" class="hidden">
+            <div id="timer_container">0 seconds elapsed</div>
+            <div id="tile_container"></div>
+        </div>
+        <div id="panel_gameover" class="hidden">
+            <p>Game over!</p>
+            <div id="easy">
+                <p>Easy Mode</p>
+                <p>Your time: Not available</p>
+                <p>Best time: Not available</p>
+            </div>
+
+            <div id="medium">
+                <p>Medium Mode</p>
+                <p>Your time: Not available</p>
+                <p>Best time: Not available</p>
+            </div>
+
+            <div id="hard">
+                <p>Hard Mode</p>
+                <p>Your time: Not available</p>
+                <p>Best time: Not available</p>
+            </div>
+
+            <button id="restart">Click to restart!</button>
+        </div>
+
+        <script>
+            // DOM queries
+            const panel_gamestart = document.querySelector('#panel_gamestart');
+            const button_playgame = document.querySelector('#button_playgame');
+            const panel_gameplaying = document.querySelector('#panel_gameplaying');
+            const timer_container = document.querySelector('#timer_container');
+            const tile_container = document.querySelector('#tile_container');
+            const panel_gameover = document.querySelector('#panel_gameover');
+            const button_restart = document.querySelector('#restart');
+            const difficulty = document.querySelector('#difficulty');
+
+            const easy_end = document.querySelector('#easy');
+            const medium_end = document.querySelector('#medium');
+            const hard_end = document.querySelector('#hard');
+
+            var correct = new Audio('assignment06_images/correct.wav');
+            var wrong = new Audio('assignment06_images/wrong.wav');
+
+            // global variables to keep track of our picked tiles
+            let tile1 = false;
+            let tile2 = false;
+            let end_flag;
+            let counter = 0;
+
+
+
+
+            let flag = false;
+
+
+            let game_level = window.localStorage.getItem('level');
+
+            if(game_level) {
+
+                difficulty.value = game_level;
+
+            }
+
+            button_playgame.onclick = function(e) {
+
+                let time_count = setInterval(function() {
+                    timer_container.innerHTML = ++counter + ' seconds elapsed';
+                }, 1000);
+
+                panel_gameover.classList.add('hidden');
+                panel_gamestart.classList.add('hidden');
+                panel_gameplaying.classList.remove('hidden');
+
+                let assets = ['snorlax.png', 'electrabuzz.png', 'chansey.png', 'oddish.png',
+                            'pikachu.png', 'paras.png', 'arcanine.png', 'ponita.png',
+                            'venonat.png', 'eggsecute.png', 'machop.png', 'pidgey.png',
+                            'psyduck.png', 'tauros.png', 'vulpix.png', 'gloom.png',
+                            'krabby.png', 'butterfree.png', 'bulbasaur.png', 'clefairy.png',
+                            'koffing.png', 'goldeen.png', 'magikarp.png', 'beedrill.png',
+                            'lapras.png', 'meowth.png', 'ekans.png', 'jigglypuff.png',
+                            'horsea.png', 'polywog.png', 'sandshrew.png', 'rattata.png',
+                            'gengar.png', 'eevee.png', 'bellsprout.png', 'squirtle.png',
+                            'seel.png', 'caterpie.png'];
+
+                // pick 6 graphics at random
+                let selectedTiles = [];
+
+                if(difficulty.value=='a') {
+
+                    while (selectedTiles.length < 12) {
+                    // pick a random one from the assets array
+                    let i = parseInt( Math.random() * assets.length );
+                    selectedTiles.push( assets[i] );
+                    selectedTiles.push( assets[i] );
+                    assets.splice(i, 1);
+                    }
+
+                } else if(difficulty.value=='b') {
+
+                    tile_container.style.width = '500px';
+
+                    while (selectedTiles.length < 20) {
+                    // pick a random one from the assets array
+                    let i = parseInt( Math.random() * assets.length );
+                    selectedTiles.push( assets[i] );
+                    selectedTiles.push( assets[i] );
+                    assets.splice(i, 1);
+                    }
+
+                } else if(difficulty.value=='c') {
+
+                    tile_container.style.width = '600px';
+
+                    while (selectedTiles.length < 30) {
+                    // pick a random one from the assets array
+                    let i = parseInt( Math.random() * assets.length );
+                    selectedTiles.push( assets[i] );
+                    selectedTiles.push( assets[i] );
+                    assets.splice(i, 1);
+                    }
+
+                }
+
+                window.localStorage.setItem('level',difficulty.value);
+
+                
+                
+                
+                selectedTiles = randomize_it(selectedTiles);
+                end_flag = selectedTiles.length;
+
+                for (let i = 0; i < selectedTiles.length; i++) {
+                    // create a tile
+                    let tile = document.createElement('img');
+                    tile.src = 'assignment06_images/pokeball.png';
+                    tile.dataset.secret = 'assignment06_images/' + selectedTiles[i];
+                    tile_container.appendChild(tile);
+
+                    // set up event listeners on each tile
+                    tile.onclick = function(event) {
+
+                        if(flag || event.currentTarget.src.length<12 || event.currentTarget.src.substr(-12)!='pokeball.png') {
+                                return;
+                        }
+
+
+                        // have no tiles been clicked?
+                        if (tile1 == false && tile2 == false) {
+                            // reveal tile 1
+
+                            // switch graphics
+                            event.currentTarget.src = event.currentTarget.dataset.secret;
+
+                            // mark this as tile1
+                            tile1 = event.currentTarget;
+                        }
+                        else if (tile2 == false) {
+
+                            //if(event.currentTarget==tile1) return; don't need this, since I use src to verify
+
+                            // switch graphics
+                            event.currentTarget.src = event.currentTarget.dataset.secret;
+
+
+                            // mark this as tile1
+                            tile2 = event.currentTarget;
+
+                            // did they get it right?
+                            if (tile1.dataset.secret == tile2.dataset.secret) {
+
+                                correct.play();
+
+                                // reset the game back to the original state and allow more clicks
+                                tile1 = false;
+                                tile2 = false;
+                                
+                                end_flag -= 2;
+
+                                //end of this round
+                                if(end_flag==0) {
+
+                                    setTimeout(function() {
+
+                                        clearInterval(time_count);
+
+                                        let usr_name = prompt('Enter your name here:');
+
+                                        panel_gameplaying.classList.add('hidden');
+                                        panel_gameover.classList.remove('hidden');
+
+                                        let history_high;
+
+                                        if(difficulty.value=='a') {
+
+                                            history_high = window.localStorage.getItem('timea');
+
+                                            if(history_high && history_high<counter) {
+
+
+                                            } else {
+                                                window.localStorage.setItem('timea',counter);
+                                                history_high = counter;
+                                                window.localStorage.setItem('namea',usr_name);
+                                            }
+
+                                            easy_end.children[1].innerHTML = `Your time: ${counter} sec`;
+                                            easy_end.children[2].innerHTML = `Best time: ${history_high} sec, by ${window.localStorage.getItem('namea')}`;
+
+                                            let timeb = window.localStorage.getItem('timeb');
+                                            let nameb = window.localStorage.getItem('nameb');
+                                            if(timeb) {
+                                                medium_end.children[2].innerHTML = `Best time: ${timeb} sec, by ${nameb}`;
+                                            }
+
+                                            let timec = window.localStorage.getItem('timec');
+                                            let namec = window.localStorage.getItem('namec');
+                                            if(timec) {
+                                                hard_end.children[2].innerHTML = `Best time: ${timec} sec, by ${namec}`;
+                                            }
+
+                                        } else if(difficulty.value=='b') {
+                                            
+                                            history_high = window.localStorage.getItem('timeb');
+
+                                            if(history_high && history_high<counter) {
+
+                                            } else {
+                                                window.localStorage.setItem('timeb',counter);
+                                                history_high = counter;
+                                                window.localStorage.setItem('nameb',usr_name);
+                                            }
+
+                                            medium_end.children[1].innerHTML = `Your time: ${counter} sec`;
+                                            medium_end.children[2].innerHTML = `Best time: ${history_high} sec, by ${window.localStorage.getItem('nameb')}`;
+
+                                            let timea = window.localStorage.getItem('timea');
+                                            let namea = window.localStorage.getItem('namea');
+                                            if(timea) {
+                                                easy_end.children[2].innerHTML = `Best time: ${timea} sec, by ${namea}`;
+                                            }
+
+                                            let timec = window.localStorage.getItem('timec');
+                                            let namec = window.localStorage.getItem('namec');
+                                            if(timec) {
+                                                hard_end.children[2].innerHTML = `Best time: ${timec} sec, by ${namec}`;
+                                            }
+
+
+                                        } else if(difficulty.value=='c') {
+
+                                            
+                                            history_high = window.localStorage.getItem('timec');
+
+                                            if(history_high && history_high<counter) {
+
+                                            } else {
+                                                window.localStorage.setItem('timec',counter);
+                                                history_high = counter;
+                                                window.localStorage.setItem('namec',usr_name);
+                                            }
+
+                                            hard_end.children[1].innerHTML = `Your time: ${counter} sec`;
+                                            hard_end.children[2].innerHTML = `Best time: ${history_high} sec, by ${usr_name}`;
+
+                                            let timeb = window.localStorage.getItem('timeb');
+                                            let nameb = window.localStorage.getItem('nameb');
+                                            if(timeb) {
+                                                medium_end.children[2].innerHTML = `Best time: ${timeb} sec, by ${nameb}`;
+                                            }
+
+                                            let timea = window.localStorage.getItem('timea');
+                                            let namea = window.localStorage.getItem('namea');
+                                            if(timea) {
+                                                easy_end.children[2].innerHTML = `Best time: ${timea} sec, by ${namea}`;
+                                            }
+
+
+                                        }
+
+                                        
+
+                                        
+
+                                        button_restart.onclick = function(event) {
+                                            // counter = 0;
+                                            // end_flag = 12;
+                                            // timer_container.innerHTML = '0 seconds elapsed';
+                                            // let time_count = setInterval(function() {
+                                            //     timer_container.innerHTML = ++counter + ' seconds elapsed';
+                                            // }, 1000);
+                                            // panel_gameplaying.classList.remove('hidden');
+                                            // panel_gameover.classList.add('hidden');
+                                            
+                                            window.location.reload();
+                                            
+                                            const event_start = document.createEvent('Events');
+                                            event_start.initEvent( 'click', true, false );
+                                            button_playgame.dispatchEvent(event_start);
+                                        }
+
+                                    },50);
+
+                                }
+
+                            }
+                            else {
+
+                                wrong.play();
+
+                                
+                                flag = true;
+                                
+                                // they got it wrong
+                                setTimeout( function() {
+                                    tile1.src = 'assignment06_images/pokeball.png';
+                                    tile2.src = 'assignment06_images/pokeball.png';
+                                    tile1 = false;
+                                    tile2 = false;
+                                    flag = false;
+                                }, 1000);
+                            }
+                        }
+                        //tile.src = tile.dataset.secret;
+                    }
+                }
+            }
+
+            function randomize_it(arr) {
+
+                const result = [...arr]; // create a copy of the input array
+                for (let i = result.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1)); // generate a random index
+
+                    let temp = result[i];
+                    result[i] = result[j];
+                    result[j] = temp;
+                }
+                return result;
+
+            }
+
+        </script>
+    </body>
+</html>

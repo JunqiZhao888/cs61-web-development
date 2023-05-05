@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 02</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    
+    <style>
+
+        #container {
+            width: 800px;
+            height: 600px;
+            margin: auto;
+            border: 5px solid black;
+            position: relative;
+        }
+        
+        #background {
+            width: 100%;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 0;
+
+            height: 100%;
+        }
+
+        #title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1;
+        }
+       
+        #body {
+            position: absolute;
+            bottom: 20px;
+            right: 175px;
+            z-index: 1;
+        }
+        #head {
+            position: absolute;
+            bottom: 300px;
+            right: 250px;
+            z-index: 1;
+        }
+
+        .whiteboard {
+            border-radius: 6px;
+            background-color: aliceblue;
+
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            z-index: 1;
+
+        }
+
+    </style>
+</head>
+<body>
+
+    <div  id="container">
+
+        <script>
+            //to verify the user input is right
+            let input = prompt('please enter a number that is greater or equal to 3');
+
+            while(isNaN(input) || input<3) {
+                input = prompt('please enter a number that is greater or equal to 3');
+            }
+
+            //change the first greeting
+            const words = ['Awesome', 'Fantastic', 'Fabulous', 'Superb', 'Perfect', 'Brilliant', 'Coming up Roses'];
+            let i = parseInt( Math.random() * words.length );
+            let word = words[i];
+            document.write(`<h1 id="title">Everything is ${word}!</h1>`);
+        </script>
+
+        <script>
+                //display the time board
+            let rightNow = new Date();
+            let hour = rightNow.getHours();
+            let minute = rightNow.getMinutes();
+
+            //we have to choose the second greetings based on time
+            let time;
+            let greet;
+
+            if(hour>12) {
+
+                if(minute<10) minute = '0' + minute;
+
+                time = (hour-12) + ':' + minute + ' pm';
+            } else {
+
+                if(minute<10) minute = '0' + minute;
+
+                time = hour + ':' + minute + ' am';
+            }
+
+            if(hour>0 && hour<6) {
+                greet = 'Good Night!';
+            } else if(hour>=6 && hour<12) {
+                greet = 'Good Morning!';
+            } else if(hour>=12 && hour<18) {
+                greet = 'Good Afternoon!';
+            } else {
+                greet = 'Good Evening!';
+            }
+
+            //choose the lucky number
+            let luckySet = [];
+
+            while(luckySet.length<3) {
+                let luckyEach = parseInt(Math.random()*input)+1;
+                if(luckySet.indexOf(luckyEach)==-1) {
+                    luckySet.push(luckyEach);
+                }
+            }
+            
+            //
+            console.log(luckySet);
+
+            let sumOf = 0;
+
+            for(let i=0;i<3;i++) {
+                sumOf += luckySet[i];
+            }
+            
+            //
+            console.log(sumOf);
+            
+            let pOne = luckySet[0]/sumOf;
+            let pTwo = luckySet[1]/sumOf;
+            let pThree = luckySet[2]/sumOf;
+
+
+            document.write(`
+            <span class="whiteboard">
+                <div>The current time is ${time} - ${greet}</div>
+                <div>Your three lucky numbers are ${luckySet[0]},${luckySet[1]}, and ${luckySet[2]}!</div>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: ${100*pOne}%" aria-valuenow="${100*pOne}" aria-valuemin="0" aria-valuemax="100">${luckySet[0]}</div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: ${100*pTwo}%" aria-valuenow="${100*pTwo}" aria-valuemin="0" aria-valuemax="100">${luckySet[1]}</div>
+                    <div class="progress-bar bg-info" role="progressbar" style="width: ${100*pThree}%" aria-valuenow="${100*pThree}" aria-valuemin="0" aria-valuemax="100">${luckySet[2]}</div>
+                </div>
+            </span>
+            `);
+
+        </script>
+
+        <img id="head" src="assignment02_images/heads/head1.png">
+        <img id="body" src="assignment02_images/bodies/body1.png">
+        <img id="background" src="assignment02_images/backgrounds/afternoon.png">
+
+        <script>
+            //replace the pictures
+            let head = document.querySelector('#head');
+            let body = document.querySelector('#body');
+            let background = document.querySelector('#background');
+
+            let heads = ['assignment02_images/heads/head1.png','assignment02_images/heads/head2.png','assignment02_images/heads/head3.png','assignment02_images/heads/head4.png','assignment02_images/heads/head5.png','assignment02_images/heads/head6.png'];
+            let bodies = ['assignment02_images/bodies/body1.png','assignment02_images/bodies/body2.png','assignment02_images/bodies/body3.png','assignment02_images/bodies/body4.png','assignment02_images/bodies/body5.png','assignment02_images/bodies/body6.png'];
+            let headN = parseInt(Math.random()*6);
+            let bodyN = parseInt(Math.random()*6);
+
+            head.src = heads[headN];
+            body.src = bodies[bodyN];
+
+            if(greet=='Good Night!') {
+                background.src = 'assignment02_images/backgrounds/night.png';
+            } else if(greet=='Good Morning!') {
+                background.src = 'assignment02_images/backgrounds/morning.png';
+            } else if(greet=='Good Afternoon!') {
+                background.src = 'assignment02_images/backgrounds/afternoon.png';
+            } else {
+                background.src = 'assignment02_images/backgrounds/evening.png';
+            }
+
+
+
+        </script>
+
+    </div>
+    
+</body>
+</html>

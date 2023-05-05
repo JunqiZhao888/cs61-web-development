@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+    <style>
+        #left {
+            float: left;
+            width: 800px;
+            height: 600px;
+            position: relative;
+            margin-right: 20px;
+        }
+        #background {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+        }
+        #grass1 {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+        }
+        #grass2 {
+            position: absolute;
+            left: 275px;
+            bottom: 0px;
+        }
+        #grass3 {
+            position: absolute;
+            right: 0px;
+            bottom: 0px;
+        }
+        .grass:hover {
+            background-color: rgba(255, 255, 0, 0.5);
+        }
+
+        #result {
+            color: red;
+            display: none;
+        }
+
+        #bar_graph {
+
+            display: flex;
+        }
+
+        #B {
+            width: 100%;
+        }
+
+
+        #one {
+            background-color:red;
+            width: 0%;
+            height: 25px;
+        }
+        #two {
+            background-color: orange;
+            width: 0%;
+            height: 25px;
+        }
+        #three {
+            background-color: yellow;
+            width: 0%;
+            height: 25px;
+        }
+        #four {
+            background-color: green;
+            width: 0%;
+            height: 25px;
+        }
+        #five {
+            background-color: blue;
+            width: 0%;
+            height: 25px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div id="left">
+        <img id="background" src="images/environment_forestbackground.png">
+        <img class="grass" id="grass1" src="images/grass.png">
+        <img class="grass" id="grass2" src="images/grass.png">
+        <img class="grass" id="grass3" src="images/grass.png">
+    </div>
+    <div id="right">
+        <h1>Gotta Catch 'em All!</h1>
+        <h2 id="instructions">Click a grass to start...</h2>
+        <div id="pokemon_caught_div">Caught: 0</div>
+        <div id="pokeballs_left_div">Pokeballs: 5</div>
+        <button id="play_again_button" style="display: none;">Play Again</button>
+        <button id="reset">Start Over</button>
+        <br>
+        <div id="display_history"></div>
+        <h2 id="result">Game Over!</h2>
+        
+        <br>
+        
+        <h2>Counts</h2>
+        <div id="bar_graph">
+            <div id="A">
+                bulbasaur:<br>
+                charmander:<br>
+                eevee:<br>
+                pikachu:<br>
+                squirtle:    
+            </div>
+            <div id="B">
+                <div id="one">0</div>
+                <div id="two">0</div>
+                <div id="three">0</div>
+                <div id="four">0</div>
+                <div id="five">0</div>
+            </div>     
+        </div>
+    </div>
+
+    <script>
+        // set up DOM queries for all the things we plan on using
+        const grass1 = document.getElementById('grass1');
+        const grass2 = document.getElementById('grass2');
+        const grass3 = document.getElementById('grass3');
+        const pokemon_caught_div = document.getElementById('pokemon_caught_div');
+        const pokeballs_left_div = document.getElementById('pokeballs_left_div');
+        const play_again_button = document.getElementById('play_again_button');
+        const instructions = document.getElementById('instructions');
+        const result = document.getElementById('result');
+        const history_block = document.getElementById('display_history');
+        const start_over = document.getElementById('reset');
+        const bar_graph = document.getElementById('bar_graph');
+
+        const pokes = ['images/bulbasaur.png','images/charmander.png','images/eevee.png','images/pikachu.png','images/squirtle.png'];
+        let counts = [0,0,0,0,0];
+
+        const one = document.getElementById('one');
+        const two = document.getElementById('two');
+        const three = document.getElementById('three');
+        const four = document.getElementById('four');
+        const five = document.getElementById('five');
+
+        // create some variables to keep track of our game state logic
+        let pokeballsRemaining = 5;
+        let pokeNums = 0;
+
+        let history = [];
+        
+        grass1.onclick = function() {
+
+            //run of balls, game over
+            if(pokeballsRemaining==0) return;
+            
+            
+            //must enter the next round
+            if(play_again_button.style.display=='block') return;
+            
+
+            // reduce the # of pokeballs
+            pokeballsRemaining -= 1;
+
+            // generate a chance variable
+            let chance = parseInt( Math.random() * 3 ); // 0, 1 or 2
+
+
+            // more pokeballs
+            if (chance == 0) {
+                grass1.src = 'images/pokeballs.png';
+                pokeballsRemaining += 2;
+
+                instructions.innerHTML = 'You found two Pokeballs!'
+                history.push('Pokeballs');
+            }
+            // nothing happens
+            else if (chance == 1) {
+                grass1.src = '';
+
+                instructions.innerHTML = 'You found nothing...';
+                history.push('Nothing');
+            }
+            // it's a pokemon
+            else {
+                let poke_Index = parseInt(Math.random()*5);
+
+                counts[poke_Index]++;
+
+                thePoke = pokes[poke_Index];
+
+                grass1.src = thePoke;
+
+                pokeNums += 1;
+
+                pokemon_caught_div.innerHTML = 'Caught: ' + pokeNums;
+
+                let message = 'You caught a(n) ';
+
+                let myPoke = thePoke.slice(7,thePoke.length-4);
+
+                history.push(myPoke);
+
+                message += (myPoke+'!');
+
+                instructions.innerHTML = message;
+            }
+
+            // round is over, update the pokeballs left indicator
+            pokeballs_left_div.innerHTML = 'Pokeballs: ' + pokeballsRemaining;
+
+            // make the play agian button visible
+            play_again_button.style.display = 'block';
+
+            //show the history
+            let allResults = '';
+
+            for(let i=history.length-1;i>=0;i--) {
+                if(i!=0) {
+                    allResults += (history[i]+', ');
+                } else {
+                    allResults += history[0];
+                }
+            }
+
+            history_block.innerHTML = allResults;
+            history_block.style.color = 'blue';
+
+            if(pokeballsRemaining==0) {
+                play_again_button.style.display = 'none';
+                result.style.display = 'block';
+            }
+            
+            let summ = counts[0]+counts[1]+counts[2]+counts[3]+counts[4];
+
+            one.style.width = counts[0]/summ*100+'%';
+            one.innerText = counts[0];
+            two.style.width = counts[1]/summ*100+'%';
+            two.innerText = counts[1];
+            three.style.width = counts[2]/summ*100+'%';
+            three.innerText = counts[2];
+            four.style.width = counts[3]/summ*100+'%';
+            four.innerText = counts[3]
+            five.style.width = counts[4]/summ*100+'%';
+            five.innerText = counts[4];
+        }
+
+        grass2.onclick = function() {
+
+            //run of balls, game over
+            if(pokeballsRemaining==0) return;
+
+
+            //must enter the next round
+            if(play_again_button.style.display=='block') return;
+
+
+            // reduce the # of pokeballs
+            pokeballsRemaining -= 1;
+
+            // generate a chance variable
+            let chance = parseInt( Math.random() * 3 ); // 0, 1 or 2
+
+
+            // more pokeballs
+            if (chance == 0) {
+                grass2.src = 'images/pokeballs.png';
+                pokeballsRemaining += 2;
+
+                instructions.innerHTML = 'You found two Pokeballs!'
+                history.push('Pokeballs')
+            }
+            // nothing happens
+            else if (chance == 1) {
+                grass2.src = '';
+
+                instructions.innerHTML = 'You found nothing...'
+                history.push('Nothing');
+            }
+            // it's a pokemon
+            else {
+                let poke_Index = parseInt(Math.random()*5);
+                thePoke = pokes[poke_Index];
+
+                counts[poke_Index]++;
+
+                grass2.src = thePoke;
+
+                pokeNums += 1;
+
+                pokemon_caught_div.innerHTML = 'Caught: ' + pokeNums;
+
+                let message = 'You caught a(n) ';
+
+                let myPoke = thePoke.slice(7,thePoke.length-4);
+                history.push(myPoke);
+
+                message += (myPoke+'!');
+
+                instructions.innerHTML = message;
+            }
+
+            // round is over, update the pokeballs left indicator
+            pokeballs_left_div.innerHTML = 'Pokeballs: ' + pokeballsRemaining;
+
+            // make the play agian button visible
+            play_again_button.style.display = 'block';
+
+            //show the history
+            let allResults = '';
+
+            for(let i=history.length-1;i>=0;i--) {
+                if(i!=0) {
+                    allResults += (history[i]+', ');
+                } else {
+                    allResults += history[0];
+                }
+            }
+
+            history_block.innerHTML = allResults;
+            history_block.style.color = 'blue';
+
+            if(pokeballsRemaining==0) {
+                play_again_button.style.display = 'none';
+                result.style.display = 'block';
+            }
+
+            let summ = counts[0]+counts[1]+counts[2]+counts[3]+counts[4];
+
+            one.style.width = counts[0]/summ*100+'%';
+            one.innerText = counts[0];
+            two.style.width = counts[1]/summ*100+'%';
+            two.innerText = counts[1];
+            three.style.width = counts[2]/summ*100+'%';
+            three.innerText = counts[2];
+            four.style.width = counts[3]/summ*100+'%';
+            four.innerText = counts[3]
+            five.style.width = counts[4]/summ*100+'%';
+            five.innerText = counts[4];
+        }
+
+        grass3.onclick = function() {
+
+            //run of balls, game over
+            if(pokeballsRemaining==0) return;
+
+
+            //must enter the next round
+            if(play_again_button.style.display=='block') return;
+
+
+            // reduce the # of pokeballs
+            pokeballsRemaining -= 1;
+
+            // generate a chance variable
+            let chance = parseInt( Math.random() * 3 ); // 0, 1 or 2
+
+
+            // more pokeballs
+            if (chance == 0) {
+                grass3.src = 'images/pokeballs.png';
+                pokeballsRemaining += 2;
+
+                instructions.innerHTML = 'You found two Pokeballs!'
+                history.push('Pokeballs');
+            }
+            // nothing happens
+            else if (chance == 1) {
+                grass3.src = '';
+
+                instructions.innerHTML = 'You found nothing...'
+                history.push('Nothing');
+            }
+            // it's a pokemon
+            else {
+                let poke_Index = parseInt(Math.random()*5);
+                thePoke = pokes[poke_Index];
+
+                counts[poke_Index]++;
+
+                grass3.src = thePoke;
+
+                pokeNums += 1;
+
+                pokemon_caught_div.innerHTML = 'Caught: ' + pokeNums;
+
+                let message = 'You caught a(n) ';
+
+                let myPoke = thePoke.slice(7,thePoke.length-4);
+                history.push(myPoke);
+
+                message += (myPoke+'!');
+
+                instructions.innerHTML = message;
+            }
+
+            // round is over, update the pokeballs left indicator
+            pokeballs_left_div.innerHTML = 'Pokeballs: ' + pokeballsRemaining;
+
+            // make the play agian button visible
+            play_again_button.style.display = 'block';
+
+            //show the history
+            let allResults = '';
+
+            for(let i=history.length-1;i>=0;i--) {
+                if(i!=0) {
+                    allResults += (history[i]+', ');
+                } else {
+                    allResults += history[0];
+                }
+            }
+
+            history_block.innerHTML = allResults;
+            history_block.style.color = 'blue';
+
+            if(pokeballsRemaining==0) {
+                play_again_button.style.display = 'none';
+                result.style.display = 'block';
+            } 
+
+            let summ = counts[0]+counts[1]+counts[2]+counts[3]+counts[4];
+
+            one.style.width = counts[0]/summ*100+'%';
+            one.innerText = counts[0];
+            two.style.width = counts[1]/summ*100+'%';
+            two.innerText = counts[1];
+            three.style.width = counts[2]/summ*100+'%';
+            three.innerText = counts[2];
+            four.style.width = counts[3]/summ*100+'%';
+            four.innerText = counts[3]
+            five.style.width = counts[4]/summ*100+'%';
+            five.innerText = counts[4];
+        }
+
+
+        // when the user clicks on the play again button
+        play_again_button.onclick = function() {
+
+            // make all the grass transition back to their original graphic
+            grass1.src = 'images/grass.png';
+            grass2.src = 'images/grass.png';
+            grass3.src = 'images/grass.png';
+
+            // hide the play agian button
+            play_again_button.style.display = 'none';
+        }
+
+        //to start over the game
+        start_over.onclick = function(event) {
+
+            instructions.innerHTML = 'Click a grass to start...';
+
+            //reset variables
+            pokeNums = 0;
+            pokeballsRemaining = 5;
+            history = [];
+            
+            //change the page
+            pokemon_caught_div.innerHTML = 'Caught: '+pokeNums;
+            pokeballs_left_div.innerText = 'Pokeballs: '+pokeballsRemaining;
+            history_block.innerHTML = '';
+            play_again_button.style.display = 'none';
+
+            grass1.src = 'images/grass.png';
+            grass2.src = 'images/grass.png';
+            grass3.src = 'images/grass.png';
+
+            counts = [0,0,0,0,0];
+            result.style.display = 'none';
+
+            one.style.width = '0%';
+            one.innerText = '0';
+            two.style.width = '0%';
+            two.innerText = '0';
+            three.style.width = '0%';
+            three.innerText = '0';
+            four.style.width = '0%';
+            four.innerText = '0';
+            five.style.width = '0%';
+            five.innerText = '0';
+
+            
+        }
+
+    </script>
+    
+</body>
+</html>

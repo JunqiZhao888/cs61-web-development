@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Design Your own Hogwarts!</title>
+    <style type="text/css">
+
+      #left{
+        float: left;
+        border: black solid 1px;
+        height: 320px;
+        width: 320px;
+        margin-right: 10px;
+      }
+
+      #container{
+        /* border: solid black 1px; */
+        width: 724px;
+        /* display: flex; */
+      }
+
+      #clear{
+        clear: both;
+      }
+
+      #right{
+        float: left;
+      }
+
+      .child{
+        box-sizing: border-box;
+        height: 32px;
+        width: 32px;
+        float: left;
+        border: black solid 1px;
+      }
+
+      .child:hover{
+        border: red solid 2px;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <h1>Design Your Own Hogwarts!</h1>
+
+    <div id="left">
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+      <div class="child"></div>
+    </div>
+
+    <div id="right">
+      <p>click on the tile here to select it. Then click on the map to the left to place the tile.</p>
+
+      <div id="container">
+
+      </div>
+    </div>
+
+    <div id="clear">
+
+    </div>
+
+    
+      
+
+  </div>
+
+
+    <!-- load in the image array file - this makes available a new array of all image filenames that you can use for this project -->
+    <!-- Assets courtesy of Crawl Stone Soup: https://github.com/crawl/tiles -->
+    <script src="image_array.js"></script>
+    <script>
+
+      let children = document.querySelectorAll('.child');
+      let container = document.querySelector('#container');
+      let dom;
+
+      let choose = '';
+
+      for(let i=0;i<array_library.length;i++) {
+        
+        let srcc = array_library[i];
+
+        let each = document.createElement('div');
+        each.style.width = '32px';
+        each.style.height = '32px';
+        each.style.backgroundImage = 'url('+srcc+')';
+        each.style.boxSizing = 'border-box';
+        each.style.float = 'left';
+        each.style.margin = '4px';
+
+        each.onclick = function(event) {
+
+          if(dom) dom.style.border = '0px';
+
+          choose = event.currentTarget.style.backgroundImage;
+          event.currentTarget.style.border = 'solid 3px yellow';
+          dom = event.currentTarget;
+
+        }
+
+        container.appendChild(each);      
+      }
+
+      for(let i=0;i<children.length;i++) {
+
+        children[i].onclick = function(event) {
+
+          event.currentTarget.style.backgroundImage = choose;
+
+        }
+
+
+      }
+
+    </script>
+
+
+  </body>
+</html>
